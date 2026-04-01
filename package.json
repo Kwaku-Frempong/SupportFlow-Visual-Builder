@@ -1,0 +1,20 @@
+{
+  "name": "supportflow-visual-builder",
+  "version": "1.0.0",
+  "description": "This challenge is designed to test your ability to bridge Computer Science fundamentals with Modern Frontend Engineering.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amalitechglobaltraining/SupportFlow-Visual-Builder.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amalitechglobaltraining/SupportFlow-Visual-Builder/issues"
+  },
+  "homepage": "https://github.com/amalitechglobaltraining/SupportFlow-Visual-Builder#readme"
+}
