@@ -1,20 +1,29 @@
 {
-  "name": "supportflow-visual-builder",
-  "version": "1.0.0",
-  "description": "This challenge is designed to test your ability to bridge Computer Science fundamentals with Modern Frontend Engineering.",
-  "main": "index.js",
+  "name": "claude-test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/amalitechglobaltraining/SupportFlow-Visual-Builder.git"
+  "dependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/amalitechglobaltraining/SupportFlow-Visual-Builder/issues"
-  },
-  "homepage": "https://github.com/amalitechglobaltraining/SupportFlow-Visual-Builder#readme"
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "tailwindcss": "^4.2.2",
+    "vite": "^8.0.1"
+  }
 }

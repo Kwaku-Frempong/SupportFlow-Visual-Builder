@@ -1,100 +1,85 @@
-# SupportFlow-Visual-Builder
-This challenge is designed to test your ability to bridge Computer Science fundamentals with Modern Frontend Engineering.
+# SupportFlow — Visual Decision Tree Editor
 
-## 1. Business Scenario & Context
-**Client:** SupportFlow AI  
-**Industry:** Customer Support Automation (Chatbots)  
+A Visual Decision Tree Editor for building and testing chatbot conversation flows. Built with React + Vite + Tailwind CSS.
 
-**The Problem:** SupportFlow helps companies build automated "Help Bots" (e.g., "Press 1 for Billing, 2 for Tech Support"). Currently, their configuration is done via a messy Excel spreadsheet. It is error-prone, hard to visualize, and frustrating for non-technical managers.
+## Getting Started
 
-**Your Role:** You are the new Frontend Engineer. The Product Manager wants a **Visual Decision Tree Editor** where users can see their conversation flow as a flowchart, edit the questions in real-time, and "test drive" the bot instantly.
+```bash
+npm install
+npm run dev
+```
 
----
+Open `http://localhost:5173` in your browser.
 
-## 2. The Assignment Stages
-This is a **hybrid design/engineering challenge**. You are expected to demonstrate competence in both visual design logic and complex DOM manipulation.
+## Features
 
-### Phase 1: The Design System 
-**Before writing code, you must design the visual language of the tool.**
+### Story 1 — Visual Graph
+Nodes are rendered as cards positioned absolutely on the canvas using the `x/y` coordinates from `flow_data.json`. SVG bezier curves connect parent nodes to their child nodes based on the `options[].nextId` routing — **drawn entirely from scratch** using `getBoundingClientRect` for live coordinate calculation, with no graph libraries involved.
 
-* **Deliverable:** A link to your design file (Figma, Penpot, or Sketch) or a PDF export of your design frames.
-* **Requirement:** Your design file must include a dedicated **"Design System" page** that defines:
-    * **Canvas** 
-    * **Node Cards**
-    * **Connectors**
-    * **Color Semantics**
+### Story 2 — Node Editor
+Click any node to open the Edit Panel (slides in from the right). You can:
+- Edit the question/message text — updates the card in real time
+- Edit option labels
+- Change where each option routes ("Goes to" dropdown)
+- Add or remove options
+- Delete a node (removes it and cleans up any references to it)
 
-### Phase 2: The Implementation
-**Build the "Flow Builder" using your design system.**
+All changes are immediate — no save button needed.
 
-* **Constraint 1 (Critical):** You **cannot** use Flowchart/Graph libraries like `react-flow`, `jsPlumb`, or `mermaid.js`. You must build the node rendering and line connection logic yourself to prove you understand DOM coordinates and SVG/Canvas drawing.
-* **Constraint 2:** Do not use component libraries like Material UI or Bootstrap. (Tailwind is allowed only if you use it to build custom components).
+### Story 3 — Preview Mode
+Click **▶ Preview Bot** in the toolbar to enter the chat interface. The bot starts at the `start` node and the conversation unfolds as you click answer buttons. A **Restart** button appears when you reach a leaf node (end of flow).
 
----
+### Story 4 (Wildcard) — Drag-and-Drop Node Repositioning
 
-## 3. User Stories & Acceptance Criteria
+**Feature:** Nodes can be dragged and repositioned anywhere on the canvas. SVG connection lines recalculate live as a node moves.
 
-### Core Features (Required)
+**Why this feature?**
 
-#### Story 1: The Visual Graph
-> "As a user, I want to see my conversation logic as a connected flowchart, not a list."
+When a support team first maps out their flow it rarely stays that way. As the number of questions and branches grows, the canvas becomes cluttered and hard to reason about. Without drag-and-drop, every layout change requires editing raw JSON coordinates — a task that non-technical managers cannot do themselves.
 
-* **AC 1:** The app renders "Nodes" (questions) based on the provided JSON data.
-* **AC 2:** The Nodes are positioned absolutely on the canvas (using the x/y coordinates provided in the JSON).
-* **AC 3:** Visual lines (SVG or HTML Canvas) connect a Parent Node to its Child Nodes based on the flow logic.
+Drag-and-drop makes the editor **self-sufficient for its intended users**: a support manager can reorganise their flow visually, spot crossing lines, and bring clarity to the diagram — all without engineering help.
 
-#### Story 2: The Editor
-> "As a user, I need to update the text when our support policies change."
+**Business value:**
+- Reduces friction in the editing workflow
+- Allows managers to visually validate the conversation path before going live
+- Demonstrates layout ownership (the editor becomes the source of truth, not the JSON file)
+- The feature directly reinforces the core value proposition: replacing a spreadsheet with a tool that *shows* you how the conversation flows
 
-* **AC 1:** Clicking a Node opens an "Edit Panel" or turns the card into an editable form.
-* **AC 2:** Users can edit the "Question Text" and the changes reflect immediately on the canvas.
-* **AC 3:** (Constraint) You do not need to save changes to a permanent database. Managing local state (in-memory) is sufficient.
+**Implementation notes:**
+- Uses `mousedown`/`mousemove`/`mouseup` events only — no drag-and-drop libraries
+- Drag state is stored in a `useRef` (not `useState`) inside the handler to avoid stale closures on `mousemove`
+- A 4px movement threshold distinguishes a drag from a click (click still opens the Edit Panel)
+- `svgTrigger` (an integer) is incremented on every `mousemove` tick, causing `SVGLayer` to re-render and re-read `getBoundingClientRect` values, keeping lines in sync with the moving node
 
-#### Story 3: The "Preview" Mode (The Runner)
-> "As a manager, I want to test the bot experience as if I were a real customer."
+### Bonus — Export JSON
+The **↓ Export JSON** button in the toolbar downloads the current flow state as `flow_data.json`, preserving all edits including repositioned node coordinates.
 
-* **AC 1:** A "Play" button toggles the UI from "Editor View" (Flowchart) to "Preview Mode" (Chat Interface).
-* **AC 2:** In Preview Mode, the app displays the Start Node's question.
-* **AC 3:** When the user selects an answer, the app traverses the graph to show the next node.
-* **AC 4:** Show a "Restart" button when a leaf node (end of conversation) is reached.
+## Technical Constraints Met
 
-### The "Wildcard" Feature (Required)
+| Constraint | Approach |
+|------------|----------|
+| No graph libraries (react-flow, jsPlumb, mermaid) | SVG paths drawn manually using `getBoundingClientRect` coordinate math |
+| No component libraries (MUI, Bootstrap) | Pure Tailwind CSS with custom components |
+| Line connections | Cubic bezier `<path>` elements on an absolutely-positioned `<svg>` overlay |
+| Drag-and-drop | Raw mouse events on the canvas container |
 
-#### Story 4: The Innovation Clause
-> "As a developer, I want to add one feature that makes this tool indispensable."
+## Project Structure
 
-* **Task:** Identify a missing feature that improves the *Editor* experience.
-* **AC 1:** Implement **one** additional feature of your choice.
-* **AC 2:** In your README, explain *why* you chose this feature and how it adds value to the business.
-
----
-
-## 4. Technical Requirements
-* **Data:** Use the `flow_data.json` file provided in this repo.
-* **Tech Stack:** React, Vue, Svelte, or Vanilla JS.
-
----
-
-## 5. Submission Instructions
-1.  **Fork** this repository.
-2.  Complete the code in your fork.
-3.  **Update the README:**
-    * **Delete** all the instructions in this file (the text you are reading now).
-    * **Replace** them with your own documentation.
-    * *Note: Do not append your docs to the end. The final README should look like a professional project documentation, not a homework assignment.*
-4.  Submit your repo link via the [online](https://forms.office.com/e/G6vaRQxWYM) form.
-
-### ⚠️ CRITICAL: Pre-Submission Checklist
-
-**STOP and review your work.** To be eligible for the Solution Defense interview, your submission **MUST** pass the following "Gatekeeper" checks.
-
-If any of the following are incorrect, your submission will be flagged as incomplete and you will **NOT** be invited for an interview.
-
-1.  **Public Repository:** Is your GitHub repository set to **Public**? (Private links will be auto-rejected).
-2.  **Audit-Ready History:** Does your Git commit history show your progress over time? (Repositories with a single "Initial Commit" or "Upload files" containing the entire project will be **rejected as unverifiable**).
-3.  **Working Deployment:** Have you tested your live link in an **Incognito/Private** window to ensure it loads without errors?
-4.  **No Restricted Libraries:** Did you build your own components? (Submissions using **Bootstrap, Material UI, or Chakra UI** will be disqualified).
-5.  **Design File Access:** Is your Figma/Penpot link included and set to **"Anyone with the link can view"**?
-6.  **Documentation:** Have you deleted the original assignment text from the `README.md` and replaced it with your own project documentation?
-
-> **By submitting your work, you acknowledge that failure to meet these criteria effectively ends your application process.**
+```
+src/
+├── hooks/useDecisionTree.js     All state, mutations, drag, preview logic
+├── components/
+│   ├── Toolbar.jsx
+│   ├── EditPanel.jsx
+│   ├── Canvas/
+│   │   ├── Canvas.jsx           Mouse event delegation, layout container
+│   │   ├── NodeCard.jsx         Individual node card (absolute positioned)
+│   │   └── SVGLayer.jsx         Bezier connection lines (SVG overlay)
+│   └── Preview/
+│       ├── PreviewPanel.jsx     Chat interface
+│       └── ChatBubble.jsx       Message bubbles
+├── utils/
+│   ├── pathUtils.js             Bezier path math
+│   └── exportUtils.js           JSON download + ID generation
+└── data/flow_data.json          Initial flow data
+```
